@@ -1,0 +1,60 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<!-- Database Configuration -->
+	<import resource="datasource/datasourceMappings.xml"/>
+	<import resource="datasource/hibernateMapping.xml"/>
+	<import resource="rssFeedConfig.xml"/>
+	
+	<context:component-scan base-package="org.i3.smartmeter.billing.controller" />
+	<context:component-scan base-package="org.i3.smartmeter.billing.dao.impl" />
+	<context:component-scan base-package="org.i3.smartmeter.billing.domain" />
+	
+	<mvc:annotation-driven />
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	    <property name="maxUploadSize" value="50000000"/>
+	</bean>
+	
+	 <bean id="viewResolver1" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+        <property name="order" value="1"/>
+        <property name="basename" value="views"/>
+    </bean>
+     
+    <bean id="viewResolver2"
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="order" value="2"/>
+        <property name="prefix" value="" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+    
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<bean id="transactionManager"
+	    class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+	    <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="customerDao" class="org.i3.smartmeter.billing.dao.impl.CustomerHibernateDaoImpl">
+		<constructor-arg name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="usageInfoDao" class="org.i3.smartmeter.billing.dao.impl.UsageInfoDaoImpl">
+		<constructor-arg name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="rulesDao" class="org.i3.smartmeter.billing.dao.impl.RateDaoImpl">
+		<constructor-arg name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+</beans>
